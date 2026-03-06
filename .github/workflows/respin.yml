@@ -13,7 +13,7 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt update
-          sudo apt install -y squashfs-tools xorriso kpartx mtools redirection p7zip-full wget curl
+          sudo apt install -y squashfs-tools xorriso kpartx mtools 7zip wget curl
 
       - name: Download Tools & ISO
         run: |
@@ -21,7 +21,7 @@ jobs:
           wget -c "https://goo.gl/Y8vS95" -O isorespin.sh
           chmod +x isorespin.sh
 
-          # Descargar Lubuntu 22.04 LTS (64-bit) - Mejor compatibilidad que la 20.04
+          # Descargar Lubuntu 22.04 LTS (64-bit)
           wget -c "https://cdimage.ubuntu.com/lubuntu/releases/22.04/release/lubuntu-22.04.5-desktop-amd64.iso" -O original.iso
 
       - name: Patch ISO (The Magic)
