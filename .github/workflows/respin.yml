@@ -13,21 +13,25 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt update
-          sudo apt install -y squashfs-tools xorriso kpartx mtools 7zip wget curl
+          sudo apt install -y squashfs-tools xorriso kpartx mtools 7zip wget curl bc
 
       - name: Download Tools & ISO
         run: |
-          # Descargar isorespin.sh desde el enlace de Google Drive proporcionado
-          curl -L "https://drive.usercontent.google.com/download?id=0B99O3A0dDe67S053UE8zN3NwM2c&export=download" -o isorespin.sh
+          # Descargar isorespin.sh desde un espejo confiable en GitHub (versión 8.4.2 o superior)
+          # Usamos este fork mantenido o el original si tuviera link directo
+          wget -O isorespin.sh "https://raw.githubusercontent.com/linuxium/isorespin/master/isorespin.sh" || \
+          wget -O isorespin.sh "https://raw.githubusercontent.com/wkelong/isorespin/master/isorespin.sh"
+          
           chmod +x isorespin.sh
 
-          # Descargar Lubuntu 20.04.5 LTS desde el enlace proporcionado
-          wget -c --retry-connrefused --tries=10 --user-agent="Mozilla/5.0" \
+          # Descargar Lubuntu 20.04.5 LTS
+          wget -c --retry-connrefused --tries=5 --user-agent="Mozilla/5.0" \
             "https://cdimage.ubuntu.com/lubuntu/releases/20.04.5/release/lubuntu-20.04.5-desktop-amd64.iso" -O original.iso
 
       - name: Patch ISO (The Magic)
         run: |
           # Parcheamos para Intel Atom Z3735F (32-bit UEFI + RTL8723BS WiFi)
+          # Nota: isorespin.sh necesita privilegios de sudo para montar la ISO
           sudo ./isorespin.sh -i original.iso \
             --atom \
             -u \
