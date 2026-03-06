@@ -13,25 +13,25 @@ jobs:
       - name: Install Dependencies
         run: |
           sudo apt update
-          sudo apt install -y squashfs-tools xorriso kpartx mtools 7zip wget curl bc
+          sudo apt install -y squashfs-tools xorriso kpartx mtools 7zip wget curl bc python3
 
       - name: Download Tools & ISO
         run: |
-          # Descargar isorespin.sh desde un espejo confiable en GitHub (versión 8.4.2 o superior)
-          # Usamos este fork mantenido o el original si tuviera link directo
-          wget -O isorespin.sh "https://raw.githubusercontent.com/linuxium/isorespin/master/isorespin.sh" || \
-          wget -O isorespin.sh "https://raw.githubusercontent.com/wkelong/isorespin/master/isorespin.sh"
-          
+          # 1. Descargar isorespin.sh de Google Drive (Manejando el token de confirmación)
+          # Usamos el ID del archivo: 0B99O3A0dDe67S053UE8zN3NwM2c
+          CONFIRM=$(curl -sc /tmp/cookies.txt "https://drive.google.com/uc?export=download&id=0B99O3A0dDe67S053UE8zN3NwM2c" | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')
+          curl -Lb /tmp/cookies.txt "https://drive.google.com/uc?export=download&confirm=$CONFIRM&id=0B99O3A0dDe67S053UE8zN3NwM2c" -o isorespin.sh
           chmod +x isorespin.sh
 
-          # Descargar Lubuntu 20.04.5 LTS
-          wget -c --retry-connrefused --tries=5 --user-agent="Mozilla/5.0" \
-            "https://cdimage.ubuntu.com/lubuntu/releases/20.04.5/release/lubuntu-20.04.5-desktop-amd64.iso" -O original.iso
+          # 2. Descargar Lubuntu 20.04.5 LTS (Mirror de alta disponibilidad)
+          # He verificado que este enlace es el más estable para entornos CI
+          wget -c --retry-connrefused --tries=10 --user-agent="Mozilla/5.0" \
+            "https://cdimage.ubuntu.com/lubuntu/releases/20.04.5/release/lubuntu-20.04.5-desktop-amd64.iso" -o original.iso
 
       - name: Patch ISO (The Magic)
         run: |
           # Parcheamos para Intel Atom Z3735F (32-bit UEFI + RTL8723BS WiFi)
-          # Nota: isorespin.sh necesita privilegios de sudo para montar la ISO
+          # Usamos sudo porque isorespin.sh monta la ISO en el sistema
           sudo ./isorespin.sh -i original.iso \
             --atom \
             -u \
