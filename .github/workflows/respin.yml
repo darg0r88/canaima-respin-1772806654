@@ -17,14 +17,13 @@ jobs:
 
       - name: Download Tools & ISO
         run: |
-          # Descargar isorespin.sh
-          wget -c --retry-connrefused --tries=5 "https://goo.gl/Y8vS95" -O isorespin.sh
+          # Descargar isorespin.sh desde el enlace de Google Drive proporcionado
+          curl -L "https://drive.usercontent.google.com/download?id=0B99O3A0dDe67S053UE8zN3NwM2c&export=download" -o isorespin.sh
           chmod +x isorespin.sh
 
-          # Usar una URL más robusta (Lubuntu 22.04 LTS)
-          # Intentamos con el mirror oficial que suele ser más estable para CI
+          # Descargar Lubuntu 20.04.5 LTS desde el enlace proporcionado
           wget -c --retry-connrefused --tries=10 --user-agent="Mozilla/5.0" \
-            "https://cdimage.ubuntu.com/lubuntu/releases/22.04/release/lubuntu-22.04.5-desktop-amd64.iso" -O original.iso
+            "https://cdimage.ubuntu.com/lubuntu/releases/20.04.5/release/lubuntu-20.04.5-desktop-amd64.iso" -O original.iso
 
       - name: Patch ISO (The Magic)
         run: |
