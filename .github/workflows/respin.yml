@@ -18,11 +18,13 @@ jobs:
       - name: Download Tools & ISO
         run: |
           # Descargar isorespin.sh
-          wget -c "https://goo.gl/Y8vS95" -O isorespin.sh
+          wget -c --retry-connrefused --tries=5 "https://goo.gl/Y8vS95" -O isorespin.sh
           chmod +x isorespin.sh
 
-          # Descargar Lubuntu 22.04 LTS (64-bit)
-          wget -c "https://cdimage.ubuntu.com/lubuntu/releases/22.04/release/lubuntu-22.04.5-desktop-amd64.iso" -O original.iso
+          # Usar una URL más robusta (Lubuntu 22.04 LTS)
+          # Intentamos con el mirror oficial que suele ser más estable para CI
+          wget -c --retry-connrefused --tries=10 --user-agent="Mozilla/5.0" \
+            "https://cdimage.ubuntu.com/lubuntu/releases/22.04/release/lubuntu-22.04.5-desktop-amd64.iso" -O original.iso
 
       - name: Patch ISO (The Magic)
         run: |
